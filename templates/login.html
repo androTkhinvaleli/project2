@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+
+{% block body %}
+    <h1 style="padding-top: 10%">Snap Into It</h1>
+    <h2>{{ login_message }}</h2>
+    <div class="row" >
+        <div class="col-md-6">
+            <form action="{{url_for('login')}}" method="POST">
+                <h2>Register</h2>
+                <input class="form-control" type="text" name="user_register" id="user_register" placeholder="username" maxlength="15" required>
+                <input class="form-control" type="password" name="password_register" onkeyup="matching()" id="password_register"  placeholder="password" minlength="5" maxlength="15" required>
+                <input class="form-control" type="password" name="confirm_password_register" onkeyup="matching()" id="confirm_password_register"  placeholder="confirm password" required> 
+                <button class="btn btn-secondary btn-lg" id='submitForm' type="submit">Register</button>
+            </form>
+        </div>
+        <div class="col-md-6">
+            <form action="{{url_for('login')}}" method="POST">
+                <h2>Log In</h2>
+                <input class="form-control" type="text" name="user_login" placeholder="username" required>
+                <input class="form-control" type="password" name="password_login" placeholder="password" required>
+                <button class="btn btn-secondary btn-lg" type="submit">Log In</button>
+
+            </form>
+        </div>
+    </div>
+    <script>
+            function matching() {                                                                      
+                var userPassword=document.querySelector("#password_register");                                                        
+                var userPasswordRepeat=document.querySelector('#confirm_password_register');
+                if (userPassword.value===userPasswordRepeat.value){            
+                    userPassword.style.border="1px solid green";                                        
+                    userPasswordRepeat.style.border="1px solid green";
+                    document.querySelector('#submitForm').disabled=false;
+                } else {                                                                                    
+                    userPassword.style.border="1px solid red";
+                    userPasswordRepeat.style.border="1px solid red";
+                    document.querySelector('#submitForm').disabled=true;
+                }
+            }
+    </script>
+    
+     
+{% endblock %}
