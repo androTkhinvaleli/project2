@@ -2,7 +2,7 @@ import os
 import json
 import requests
 from redirector import *
-from flask import Flask, session, render_template, request, redirect, url_for, Markup
+from flask import Flask, jsonify, session, render_template, request, redirect, url_for, Markup
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -12,10 +12,7 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 socketio = SocketIO(app)
 
-
-
-
-
+votes = {"yes": 0, "no": 0, "maybe": 0}
 
 # Check for environment variable
 if not os.getenv("DATABASE_URL"):
@@ -30,13 +27,21 @@ Session(app)
 engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
 
-@app.route("/",methods=["GET","POST"])
+@app.route("/")
 @login_required
 def index():
+    return render_template("index.html", votes=votes)
 
-    return render_template("index.html")
 
+@socketio.on("submit vote")
+def vote(data):
+    selection = data["selection"]
+    votes[selection] += 1
+    emit("vote totals", votes, broadcast=True)
 
+#if __name__ == '__main__':
+#    app.debug = True
+#    app.run(port=8080)
 
 @app.route("/login", methods=["GET","POST"])
 def login():
@@ -76,5 +81,5 @@ def logout():
     session.clear()
     return redirect(url_for("login"))
 
-
-
+if __name__ == '__main__':
+    app.run(debug=True, host="0.0.0.0")
