@@ -8,49 +8,19 @@
     <a href="{{url_for('logout')}}">Log out</a>
     <div class="row">
         <div class="col-md-6">
-            <ul class="list-group" id="list">
-                <li class="list-group-item">Cras justo odio</li>
-                <li class="list-group-item">Dapibus ac facilisis in</li>
+            <ul class="list-group" id="messages">
                 
             </ul>
             <div class="input-group mb-3">
-                <input type="text" class="form-control" id="new-task" placeholder="Message">
+                <input type="text" class="form-control" id="myMessage" placeholder="Message">
                 <div class="input-group-append">
-                  <button class="btn btn-outline-secondary" id="addTask">Send</button>
+                  <button class="btn btn-outline-secondary" id="sendbutton">Send</button>
                 </div>
             </div>
+            
         </div>   
-        <div class="col-md-6">
-            <div>Yes Votes: <span id="yes">{{ votes["yes"] }}</span></div>
-            <div>No Votes: <span id="no">{{ votes["no"] }}</span></div>
-            <div>Maybe Votes: <span id="maybe">{{ votes["maybe"] }}<span></div>
-            <hr>
-            <button class="button" data-vote="yes">Yes</button>
-            <button class="button" data-vote="no">No</button>
-            <button class="button" data-vote="maybe">Maybe</button>
-        </div>
+        
     </div>
 
-
-    <script type="text/javascript">
-        var newTask = document.querySelector('#new-task');
-        var addTaskBtn = document.querySelector('#addTask');
-        var toDoUl = document.querySelector("ul");
-
-        var createNewTask = function(task){
-            var listItem = document.createElement("li"); 
-            listItem.innerText = task;
-            return listItem;
-        };
-    
-        var addTask = function(){
-            var listItem = createNewTask(newTask.value);
-            listItem.classList.add("list-group-item");
-            toDoUl.appendChild(listItem);
-
-            newTask.value="";
-        };
-        addTaskBtn.addEventListener("click", addTask);
-    </script>
     
 {% endblock %}

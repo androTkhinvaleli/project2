@@ -6,7 +6,7 @@ from flask import Flask, jsonify, session, render_template, request, redirect, u
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
-from flask_socketio import SocketIO, emit
+from flask_socketio import SocketIO, emit, send
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
@@ -33,15 +33,10 @@ def index():
     return render_template("index.html", votes=votes)
 
 
-@socketio.on("submit vote")
-def vote(data):
-    selection = data["selection"]
-    votes[selection] += 1
-    emit("vote totals", votes, broadcast=True)
-
-#if __name__ == '__main__':
-#    app.debug = True
-#    app.run(port=8080)
+@socketio.on('message')
+def handleMessage(msg):
+	print('Message: ' + msg)
+	emit('Message', msg, broadcast=True)
 
 @app.route("/login", methods=["GET","POST"])
 def login():
@@ -81,5 +76,14 @@ def logout():
     session.clear()
     return redirect(url_for("login"))
 
+# if __name__ == '__main__':
+#     app.run(debug=True, host="0.0.0.0")
+
+
+# if __name__ == '__main__':
+#    app.debug = True
+#    app.run(port=8080)
+
 if __name__ == '__main__':
-    app.run(debug=True, host="0.0.0.0")
+   app.debug = True
+   app.run(port=5015)
