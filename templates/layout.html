@@ -14,11 +14,15 @@
     <!-- <script  src="https://code.jquery.com/jquery-3.3.1.min.js"  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script> -->
     
 </head>
-<body style="height: 100%" class="container">       
-    
-    {% block body %}
-    {% endblock %}
-      
+<body style="height: 100%" >       
+    <nav  class="navbar navbar-light bg-light">
+        <a class="navbar-brand" href="#"><h1>Chat</h1></a>
+        <a class="btn btn-danger" role="button" style="float: right" href="{{url_for('logout')}}">Log out</a>
+    </nav>
+    <div style="height: 100%" class="container">
+        {% block body %}
+        {% endblock %}
+    </div>  
     
 
     <script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="  crossorigin="anonymous"></script>

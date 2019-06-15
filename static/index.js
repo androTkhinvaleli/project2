@@ -7,7 +7,9 @@ document.addEventListener('DOMContentLoaded', () => {
     var myMessage = document.querySelector("#myMessage");
     var sendbutton = document.querySelector("#sendbutton");
     var username = document.querySelector("#username");
-    var unlis = document.querySelector(".list-group")
+    var unlis = document.querySelector(".list-group");
+    var addChanel = document.querySelector("#addChanel");
+    var newChanelName = document.querySelector("#newChanelName");
 
     function activateChanel(e) {
         var elems = document.querySelectorAll("button");
@@ -16,10 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         e.target.classList.add("active");
     }
-
-    // function andro(){
-    //     socket.emit("typing", {usr : username.value})
-    // }
 
     socket.on('connect', function() {
 		socket.emit('message', {msg : 'Joined!', usr: "User"});
@@ -40,16 +38,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
     });
 
-    myMessage.addEventListener("keypress",() => {
-        socket.emit('typing', username.value)
-    });   
-    
-    socket.on('displaytyping', function(data){
-        var newMessage = document.createElement("p");
-        newMessage.innerHTML =("<strong>" + data + "</strong>" + "is typing");
-        newMessage.classList.add("list-group-item");
+    unlis.addEventListener("click", activateChanel);
+
+    addChanel.addEventListener("click", () =>{
+        if(newChanelName.value==""){
+            alert("Type name of new chanel")
+        }else{
+            socket.emit('new_chanel', newChanelName.value);
+            newChanelName.value="";  
+        }
     });
 
-    unlis.addEventListener("click", activateChanel)
+    socket.on('add_new_chanel', data=>{
+        var newChanel = document.createElement("button");
+        newChanel.innerHTML = data;
+        newChanel.classList.add("list-group-item");
+        newChanel.classList.add("list-group-item-action");
+        newChanel.setAttribute("type", "button");
+        unlis.appendChild(newChanel);
+        
+    });
+
 
 });

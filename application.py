@@ -33,14 +33,16 @@ db = scoped_session(sessionmaker(bind=engine))
 def index():
     return render_template("index.html")
 
-@socketio.on('typing')
-def handletyping(data):
-    emit('displaytyping', data, broadcast=True)
+
 
 @socketio.on('message')
 def handleMessage(data):
 	
 	emit('displayMessage', data, broadcast=True)
+
+@socketio.on('new_chanel')
+def handleNewChanel(data):
+    emit('add_new_chanel', data, broadcast=True)    
 
 @app.route("/login", methods=["GET","POST"])
 def login():
@@ -90,4 +92,4 @@ def logout():
 
 if __name__ == '__main__':
    app.debug = True
-   app.run(port=5015)
+   app.run(port=5007)

@@ -4,33 +4,35 @@
 {% block body %}
 
 
-    <h1>Chat</h1>
-    <a href="{{url_for('logout')}}">Log out</a>
-    <div class="row p-2" style="height: 75%">
-        <div class="col-md-8 border border-secondary justify-content-end "  style="height: 100%; position: relative;">
+    
+    <div class="row p-2" style="height: 85%">
+        <div class="col-md-8 border border-secondary justify-content-end "  style="height: 100%; position: relative; padding: 7px;">
             <div  id="messages" style="height: 90%; overflow-y: scroll;">
                 
             </div>
-            <div class="input-group mb-3" style=" bottom: 0; position: absolute; left: 0;">
+            <div class="input-group mb-3" style=" bottom: 0; position: absolute; left: 0; padding: 0 10px;">
                 <input type="text" class="form-control" id="username" placeholder="Username"  required>
                 <input type="text" class="form-control" id="myMessage" placeholder="Message" style="width: 40%" >
                 <div class="input-group-append">
-                <button class="btn btn-outline-secondary" id="sendbutton">Send</button>
+                    <button class="btn btn-outline-secondary" id="sendbutton">Send</button>
                 </div>
             </div>  
         </div>   
-        <div class="col-md-4 border border-secondary" style="height: 100%">
+        <div class="col-md-4 border border-secondary" style="height: 100%; padding: 7px;">
             <h6>Chanels</h6>
             <div class="list-group">
                 <button type="button"  class="list-group-item list-group-item-action">
-                  Cras justo odio
+                  General
                 </button>
-                <button type="button"  class="list-group-item list-group-item-action">Dapibus ac facilisis in</button>
-                <button type="button"  class="list-group-item list-group-item-action">Morbi leo risus</button>
-                <button type="button"  class="list-group-item list-group-item-action">Porta ac consectetur ac</button>
-                
-              </div>
+                <button type="button"  class="list-group-item list-group-item-action">Chanel 1</button>
+            </div>
             
+            <div class="input-group mb-3" style="padding-top: 7px">
+                <input type="text" class="form-control" id="newChanelName" placeholder="New Chanel Name">
+                    <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button" id="addChanel">+ add Chanel</button>
+                </div>
+            </div>
         </div>
     </div>
 
