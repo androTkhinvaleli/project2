@@ -12,7 +12,8 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 socketio = SocketIO(app)
 
-votes = {"yes": 0, "no": 0, "maybe": 0}
+
+
 
 # Check for environment variable
 if not os.getenv("DATABASE_URL"):
@@ -28,15 +29,18 @@ engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
 
 @app.route("/")
-@login_required
+# @login_required
 def index():
-    return render_template("index.html", votes=votes)
+    return render_template("index.html")
 
+@socketio.on('typing')
+def handletyping(data):
+    emit('displaytyping', data, broadcast=True)
 
 @socketio.on('message')
-def handleMessage(msg):
-	print('Message: ' + msg)
-	emit('Message', msg, broadcast=True)
+def handleMessage(data):
+	
+	emit('displayMessage', data, broadcast=True)
 
 @app.route("/login", methods=["GET","POST"])
 def login():

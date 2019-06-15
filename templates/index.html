@@ -6,21 +6,39 @@
 
     <h1>Chat</h1>
     <a href="{{url_for('logout')}}">Log out</a>
-    <div class="row">
-        <div class="col-md-6">
-            <ul class="list-group" id="messages">
+    <div class="row p-2" style="height: 75%">
+        <div class="col-md-8 border border-secondary justify-content-end "  style="height: 100%; position: relative;">
+            <div  id="messages" style="height: 90%; overflow-y: scroll;">
                 
-            </ul>
-            <div class="input-group mb-3">
-                <input type="text" class="form-control" id="myMessage" placeholder="Message">
-                <div class="input-group-append">
-                  <button class="btn btn-outline-secondary" id="sendbutton">Send</button>
-                </div>
             </div>
-            
+            <div class="input-group mb-3" style=" bottom: 0; position: absolute; left: 0;">
+                <input type="text" class="form-control" id="username" placeholder="Username"  required>
+                <input type="text" class="form-control" id="myMessage" placeholder="Message" style="width: 40%" >
+                <div class="input-group-append">
+                <button class="btn btn-outline-secondary" id="sendbutton">Send</button>
+                </div>
+            </div>  
         </div>   
-        
+        <div class="col-md-4 border border-secondary" style="height: 100%">
+            <h6>Chanels</h6>
+            <div class="list-group">
+                <button type="button"  class="list-group-item list-group-item-action">
+                  Cras justo odio
+                </button>
+                <button type="button"  class="list-group-item list-group-item-action">Dapibus ac facilisis in</button>
+                <button type="button"  class="list-group-item list-group-item-action">Morbi leo risus</button>
+                <button type="button"  class="list-group-item list-group-item-action">Porta ac consectetur ac</button>
+                
+              </div>
+            
+        </div>
     </div>
+
+    
+
+
+
+
 
     
 {% endblock %}
