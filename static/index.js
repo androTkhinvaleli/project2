@@ -11,7 +11,54 @@ document.addEventListener('DOMContentLoaded', () => {
     var addChannel = document.querySelector("#addChannel");
     var newChannelName = document.querySelector("#newChannelName");
     
+    function addNewChannel(x){
+        var newChanel = document.createElement("button");
+        newChanel.innerHTML = x;
+        newChanel.classList.add("list-group-item");
+        newChanel.classList.add("list-group-item-action");
+        newChanel.setAttribute("type", "button");
+        unlis.appendChild(newChanel);
+    }
 
+    function showMessage(data){
+        var newMessage = document.createElement("p");
+        newMessage.innerHTML = ("<strong>"+data.usr+": </strong>"+data.msg);
+        messages.appendChild(newMessage);
+        messages.scrollTop = messages.scrollHeight;
+        console.log('Received message');
+    }
+    
+    function loadMessages(data) {
+    
+        for (let index = 0; index < data.channels.General.length; index++) {
+            let x = data.channels.General[index];
+            showMessage(x);
+        }
+    
+        for (let index = 0; index < data.channelsList.length; index++) {
+            y = data.channelsList[index];
+            addNewChannel(y);
+        }
+    }
+
+    function activateChannel(e) {
+        var elems = document.querySelectorAll("button");
+        elems.forEach(function(el) {
+            el.classList.remove("active");
+        });
+        e.target.classList.add("active");
+        var activeChannel = document.querySelector(".active").innerText;
+        alert(activeChannel +" is active" );
+    }
+    
+    function logout(){
+        localStorage.removeItem("username");
+        document.location.reload(true)
+    }
+    
+
+    
+    
     var username = localStorage.getItem("username");
     if(!username){
         username = prompt("Please enter username");
@@ -21,6 +68,8 @@ document.addEventListener('DOMContentLoaded', () => {
         username = prompt("Please enter username");
         localStorage.setItem("username", username);
     }
+    var activeChannel = document.querySelector(".active").innerText;
+    
 
     socket.on('connect', function() {
 		socket.emit('message', {msg : 'Joined!', usr: username});
@@ -34,13 +83,8 @@ document.addEventListener('DOMContentLoaded', () => {
         myMessage.value = "";
     });
 
-    socket.on('showOneMessage', data=>{
-        var newMessage = document.createElement("p");
-        newMessage.innerHTML = ("<strong>"+data.usr+": </strong>"+data.msg);
-        messages.appendChild(newMessage);
-        messages.scrollTop = messages.scrollHeight;
-        console.log('Received message');
-    })
+    socket.on('showOneMessage', showMessage);
+    
     
 
     unlis.addEventListener("click", activateChannel);
@@ -54,52 +98,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    socket.on('add_new_channel', function(data){
-        var newChanel = document.createElement("button");
-        newChanel.innerHTML = data;
-        newChanel.classList.add("list-group-item");
-        newChanel.classList.add("list-group-item-action");
-        newChanel.setAttribute("type", "button");
-        unlis.appendChild(newChanel);
-        
-    });
+    socket.on('add_new_channel', addNewChannel);
 
-    logoutbtn.addEventListener("click", logout)
+    logoutbtn.addEventListener("click", logout);
 
 });
-
-function activateChannel(e) {
-    var elems = document.querySelectorAll("button");
-    elems.forEach(function(el) {
-        el.classList.remove("active");
-    });
-    e.target.classList.add("active");
-    var activeChannel = document.querySelector(".active").innerText;
-    console.log(activeChannel);
-}
-
-function logout(){
-    localStorage.removeItem("username");
-    document.location.reload(true)
-}
-
-
-function loadMessages(data) {
-    
-    for (let index = 0; index < data.length; index++) {
-        var newMessage = document.createElement("p");
-        newMessage.innerHTML =("<strong>" + data[index].usr + ": </strong>" + data[index].msg);
-        messages.appendChild(newMessage);
-        messages.scrollTop = messages.scrollHeight;
-        console.log('Received message');
-    }
-}
-
-function showMessage(data){
-    var newMessage = document.createElement("p");
-    newMessage.innerHTML = ("<strong>"+data.usr+": </strong>"+data.msg);
-    messages.appendChild(newMessage);
-    messages.scrollTop = messages.scrollHeight;
-    console.log('Received message');
-}
-

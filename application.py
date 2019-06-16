@@ -13,7 +13,8 @@ app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 socketio = SocketIO(app)
 
 channels={}  
-channels['General']=[] 
+channels['General']=[]
+channelsList=['General']
 # channels['chanel1']=[]
 # limit=100
 # count = 0
@@ -33,8 +34,8 @@ count=0
 def handleMessage(data):    
     message={'msg':data["msg"], 'usr':data["usr"]}
     channels['General'].append(message)
-    print(channels['General'])    
-    emit('displayMessage', channels['General'], broadcast=True)
+    print(channels)    
+    emit('displayMessage', {'channels':channels, 'channelsList':channelsList}, broadcast=True)
 
 @socketio.on('onemessage')
 def one_message(x):
@@ -46,12 +47,17 @@ def one_message(x):
 @socketio.on('new_channel')
 def handleNewChannel(data):
     channels[data]=[]
-    print(channels)
+    channelsList.append(data)
+    print(channelsList)
     emit('add_new_channel', data, broadcast=True)    
+
+# @socketio.on('list_channels')
+# def all_channels():
+#     emit('showChannels', channels)
 
 # if __name__ == '__main__':
 #     app.run(debug=True, host="0.0.0.0")
 
 if __name__ == '__main__':
    app.debug = True
-   app.run(port=5026)
+   app.run(port=5062)
