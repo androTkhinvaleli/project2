@@ -6,50 +6,55 @@ document.addEventListener('DOMContentLoaded', () => {
     var messages = document.querySelector('#messages');
     var myMessage = document.querySelector("#myMessage");
     var sendbutton = document.querySelector("#sendbutton");
-    var username = document.querySelector("#username");
+    var logoutbtn = document.querySelector("#logout");
     var unlis = document.querySelector(".list-group");
-    var addChanel = document.querySelector("#addChanel");
-    var newChanelName = document.querySelector("#newChanelName");
+    var addChannel = document.querySelector("#addChannel");
+    var newChannelName = document.querySelector("#newChannelName");
+    
 
-    function activateChanel(e) {
-        var elems = document.querySelectorAll("button");
-        elems.forEach(function(el) {
-            el.classList.remove("active");
-        });
-        e.target.classList.add("active");
+    var username = localStorage.getItem("username");
+    if(!username){
+        username = prompt("Please enter username");
+        localStorage.setItem("username", username);
+    }
+    if(username===null){
+        username = prompt("Please enter username");
+        localStorage.setItem("username", username);
     }
 
     socket.on('connect', function() {
-		socket.emit('message', {msg : 'Joined!', usr: "User"});
-	});
-
-	socket.on('displayMessage', function(data) {
-        var newMessage = document.createElement("p");
-        newMessage.innerHTML =("<strong>" + data.usr + ": </strong>" + data.msg);
-        
-        messages.appendChild(newMessage);
-		messages.scrollTop = messages.scrollHeight;
-		console.log('Received message');
-	});
+		socket.emit('message', {msg : 'Joined!', usr: username});
+    });
+    
+    socket.on('displayMessage', loadMessages);
+	
 
     sendbutton.addEventListener("click", function(){
-        socket.emit('message', {msg : myMessage.value, usr: username.value});
+        socket.emit('onemessage', {msg : myMessage.value, usr: username});
         myMessage.value = "";
-
     });
 
-    unlis.addEventListener("click", activateChanel);
+    socket.on('showOneMessage', data=>{
+        var newMessage = document.createElement("p");
+        newMessage.innerHTML = ("<strong>"+data.usr+": </strong>"+data.msg);
+        messages.appendChild(newMessage);
+        messages.scrollTop = messages.scrollHeight;
+        console.log('Received message');
+    })
+    
 
-    addChanel.addEventListener("click", () =>{
-        if(newChanelName.value==""){
-            alert("Type name of new chanel")
+    unlis.addEventListener("click", activateChannel);
+
+    addChannel.addEventListener("click", () =>{
+        if(newChannelName.value==""){
+            alert("Type name of new channel")
         }else{
-            socket.emit('new_chanel', newChanelName.value);
-            newChanelName.value="";  
+            socket.emit('new_channel', newChannelName.value);
+            newChannelName.value="";  
         }
     });
 
-    socket.on('add_new_chanel', data=>{
+    socket.on('add_new_channel', function(data){
         var newChanel = document.createElement("button");
         newChanel.innerHTML = data;
         newChanel.classList.add("list-group-item");
@@ -59,5 +64,42 @@ document.addEventListener('DOMContentLoaded', () => {
         
     });
 
+    logoutbtn.addEventListener("click", logout)
 
 });
+
+function activateChannel(e) {
+    var elems = document.querySelectorAll("button");
+    elems.forEach(function(el) {
+        el.classList.remove("active");
+    });
+    e.target.classList.add("active");
+    var activeChannel = document.querySelector(".active").innerText;
+    console.log(activeChannel);
+}
+
+function logout(){
+    localStorage.removeItem("username");
+    document.location.reload(true)
+}
+
+
+function loadMessages(data) {
+    
+    for (let index = 0; index < data.length; index++) {
+        var newMessage = document.createElement("p");
+        newMessage.innerHTML =("<strong>" + data[index].usr + ": </strong>" + data[index].msg);
+        messages.appendChild(newMessage);
+        messages.scrollTop = messages.scrollHeight;
+        console.log('Received message');
+    }
+}
+
+function showMessage(data){
+    var newMessage = document.createElement("p");
+    newMessage.innerHTML = ("<strong>"+data.usr+": </strong>"+data.msg);
+    messages.appendChild(newMessage);
+    messages.scrollTop = messages.scrollHeight;
+    console.log('Received message');
+}
+
