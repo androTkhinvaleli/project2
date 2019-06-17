@@ -3,14 +3,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // Connect to websocket
     var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
 
-    var messages = document.querySelector('#messages');
+    var messages = document.querySelector('#General');
     var myMessage = document.querySelector("#myMessage");
     var sendbutton = document.querySelector("#sendbutton");
     var logoutbtn = document.querySelector("#logout");
     var unlis = document.querySelector(".list-group");
     var addChannel = document.querySelector("#addChannel");
     var newChannelName = document.querySelector("#newChannelName");
-    
+    var activeChannel = document.querySelector(".active").innerText;
+    var parentDiv = document.querySelector("#parentDiv")
+
     function addNewChannel(x){
         var newChanel = document.createElement("button");
         newChanel.innerHTML = x;
@@ -18,20 +20,28 @@ document.addEventListener('DOMContentLoaded', () => {
         newChanel.classList.add("list-group-item-action");
         newChanel.setAttribute("type", "button");
         unlis.appendChild(newChanel);
+
+        var newDiv = document.createElement("div");
+        newDiv.classList.add("hidden");
+        newDiv.classList.add("messages");
+        newDiv.setAttribute("id", x);
+        parentDiv.append(newDiv);
     }
 
     function showMessage(data){
+        var idForDiv = data.channel;
+        var divForMessages = document.getElementById(idForDiv);
         var newMessage = document.createElement("p");
-        newMessage.innerHTML = ("<strong>"+data.usr+": </strong>"+data.msg);
-        messages.appendChild(newMessage);
-        messages.scrollTop = messages.scrollHeight;
+        newMessage.innerHTML = ("<strong>"+data.usr+": </strong>"+data.msg +"("+data.channel+")");
+        divForMessages.appendChild(newMessage);
+        divForMessages.scrollTop = messages.scrollHeight;
         console.log('Received message');
     }
     
     function loadMessages(data) {
-    
-        for (let index = 0; index < data.channels.General.length; index++) {
-            let x = data.channels.General[index];
+      
+        for (let index = 0; index < data.activeChannel.length; index++) {
+            let x = data.activeChannel[index];
             showMessage(x);
         }
     
@@ -47,8 +57,17 @@ document.addEventListener('DOMContentLoaded', () => {
             el.classList.remove("active");
         });
         e.target.classList.add("active");
-        var activeChannel = document.querySelector(".active").innerText;
-        alert(activeChannel +" is active" );
+        activeChannel = e.target.innerText;
+        var elemDivs = document.querySelectorAll(".messages")
+        elemDivs.forEach(function(k){
+            if (k.id != e.target.innerText) { 
+                k.classList.add("hidden");
+            }else{
+                k.classList.remove("hidden")
+            }
+            
+        });
+        socket.emit('active_channel_messages',{msg : 'Joined!', usr: username, channel: activeChannel});
     }
     
     function logout(){
@@ -68,23 +87,36 @@ document.addEventListener('DOMContentLoaded', () => {
         username = prompt("Please enter username");
         localStorage.setItem("username", username);
     }
-    var activeChannel = document.querySelector(".active").innerText;
+
     
 
     socket.on('connect', function() {
-		socket.emit('message', {msg : 'Joined!', usr: username});
+		socket.emit('message', {msg : 'Joined!', usr: username, channel: activeChannel});
     });
     
     socket.on('displayMessage', loadMessages);
 	
 
     sendbutton.addEventListener("click", function(){
-        socket.emit('onemessage', {msg : myMessage.value, usr: username});
+        socket.emit('onemessage', {msg : myMessage.value, usr: username, channel: activeChannel});
         myMessage.value = "";
     });
 
     socket.on('showOneMessage', showMessage);
     
+    socket.on('showChannelMessages',data=>{
+        for (let index = 0; index < data.length; index++) {
+            let z = data[index]
+            var idForDiv = z.channel;
+            var divForMessages = document.getElementById(idForDiv);
+            var newMessage = document.createElement("p");
+            newMessage.innerHTML = ("<strong>"+z.usr+": </strong>"+z.msg +"("+z.channel+")");
+            divForMessages.appendChild(newMessage);
+            divForMessages.scrollTop = messages.scrollHeight;
+            console.log('Received message');
+                
+        }
+    });
     
 
     unlis.addEventListener("click", activateChannel);
