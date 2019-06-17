@@ -15,12 +15,8 @@ socketio = SocketIO(app)
 channels={}  
 channels['General']=[]
 channelsList=[]
-# channels['chanel1']=[]
-# limit=100
-# count = 0
-# message={'msg':"hello  world",'usr':'andro'}
-# channels['General'].append(message)
-# print(channels['General'][count]['msg'])
+limit=100
+
 
     
 
@@ -29,13 +25,14 @@ def index():
     return render_template("index.html")
 
 
-count=0
 @socketio.on('message')
 def handleMessage(data):    
     message={'msg':data["msg"], 'usr':data["usr"], 'channel':data["channel"]}
     print(data["channel"])
     channels[data["channel"]].append(message)
     activeChannel=channels[data["channel"]]
+    if len(channels[data["channel"]])>limit:
+        channels[data["channel"]].pop(0)
     print(channels)    
     emit('displayMessage', {'activeChannel':activeChannel, 'channelsList':channelsList}, broadcast=True)
 
@@ -44,6 +41,8 @@ def one_message(x):
     message = {'msg':x["msg"], 'usr':x["usr"], 'channel':x["channel"] }
     print(x["channel"])
     channels[x["channel"]].append(message)
+    if len(channels[x["channel"]])>limit:
+        channels[x["channel"]].pop(0)
     print(channels)
     emit('showOneMessage', x, broadcast=True)
 
@@ -60,6 +59,8 @@ def all_mesages(t):
     message={'msg':t["msg"], 'usr':t["usr"], 'channel':t["channel"]}
     print(t["channel"])
     channels[t["channel"]].append(message)
+    if len(channels[t["channel"]])>limit:
+        channels[t["channel"]].pop(0)
     activeChannel=channels[t["channel"]]
     emit('showChannelMessages', activeChannel, broadcast=True)
 
@@ -68,4 +69,4 @@ def all_mesages(t):
 
 if __name__ == '__main__':
    app.debug = True
-   app.run(port=5076)
+   app.run(port=5077)

@@ -83,10 +83,6 @@ document.addEventListener('DOMContentLoaded', () => {
         username = prompt("Please enter username");
         localStorage.setItem("username", username);
     }
-    if(username===null){
-        username = prompt("Please enter username");
-        localStorage.setItem("username", username);
-    }
 
     
 
@@ -107,14 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
     socket.on('showChannelMessages',data=>{
         for (let index = 0; index < data.length; index++) {
             let z = data[index]
-            var idForDiv = z.channel;
-            var divForMessages = document.getElementById(idForDiv);
-            var newMessage = document.createElement("p");
-            newMessage.innerHTML = ("<strong>"+z.usr+": </strong>"+z.msg +"("+z.channel+")");
-            divForMessages.appendChild(newMessage);
-            divForMessages.scrollTop = messages.scrollHeight;
-            console.log('Received message');
-                
+            showMessage(z);
         }
     });
     
