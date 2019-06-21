@@ -69,4 +69,4 @@ def all_mesages(t):
 
 if __name__ == '__main__':
    app.debug = True
-   app.run(port=5077)
+   app.run(port=5000)

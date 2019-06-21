@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
         var newMessage = document.createElement("p");
         newMessage.innerHTML = ("<strong>"+data.usr+": </strong>"+data.msg +"("+data.channel+")");
         divForMessages.appendChild(newMessage);
-        divForMessages.scrollTop = messages.scrollHeight;
+        divForMessages.scrollTop = divForMessages.scrollHeight;
         console.log('Received message');
     }
     
